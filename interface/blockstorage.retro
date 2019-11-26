@@ -1,0 +1,110 @@
+# Block I/O
+
+~~~
+{{
+  'io:Blockstorage var
+  :identify
+    @io:Blockstorage n:zero? [
+      #3 io:scan-for dup n:negative?
+      [ drop 'IO_DEVICE_TYPE_0003_NOT_FOUND s:put nl ]
+      [ !io:Blockstorage ] choose ] if ;
+  ---reveal---
+  :io:block-operation identify @io:Blockstorage io:invoke ;
+}}
+~~~
+
+This implements words for interfacing with the POSIX file I/O words if
+you are using an interface supporting them. All of these are in the
+`file:` namespace.
+
+Read a block to the location in memory.
+
+~~~
+:block:read  (ba-) #0 io:block-operation ;
+~~~
+
+Write a block from the location in memory.
+
+~~~
+:block:write (ba-) #1 io:file-operation ;
+~~~
+
+With that out of the way, we can begin building higher level functionality.
+
+~~~
+  #-3 'BLOCKS const
+  'CurrentBlock var
+  'Blocks d:create #1 BLOCKS shift dup #1025 * + allot
+~~~
+
+~~~
+{{
+  #1 BLOCKS shift 'CSIZE const
+
+  :mangle CSIZE #1 - and ;
+  :cached? (b-bmf) dup dup mangle dup &Blocks + @ rot eq? ;
+  :commit (bm-) #1025 * &Blocks CSIZE + + dup @ [ #1 + swap &Blocks + @ swap (fix_this)  
+  :block (b-a) cached? [ &Blocks #8 + ]
+				[ dup commit &Blocks cache ] choose
+				swap #1025 * #1 + ;
+The first of these reads a line from the file. This is read to `here`; move
+it somewhere safe if you need to keep it around.
+
+The second goes with it. The `for-each-line` word will invoke a combinator
+once for each line in a file. This makes some things trivial. E.g., a simple
+'cat' implementation could be as simple as:
+
+  'filename [ s:put nl ] file:for-each-line
+
+~~~
+{{
+  'FID var
+  'Size var
+  'Action var
+  'Buffer var
+  :-eof? (-f) @FID file:tell @Size lt? ;
+  :preserve (q-) &FID [ &Size [ call ] v:preserve ] v:preserve ;
+---reveal---
+  :file:read-line (f-s)
+    !FID
+    [ here dup !Buffer buffer:set
+      [ @FID file:read dup buffer:add
+        [ ASCII:CR eq? ] [ ASCII:LF eq? ] [ ASCII:NUL eq? ] tri or or ] until
+        buffer:get drop ] buffer:preserve
+    @Buffer ;
+
+  :file:for-each-line (sq-)
+    [ !Action
+      file:open<for-reading> !FID !Size
+      [ @FID file:read-line @Action call -eof? ] while
+      @FID file:close
+    ] preserve ;
+}}
+~~~
+
+`file:slurp` reads a file into a buffer.
+
+~~~
+{{
+  'FID var
+  'Size var
+---reveal---
+  :file:slurp (as-)
+    [ file:open<for-reading> !FID !Size
+      buffer:set
+      @Size [ @FID file:read buffer:add ] times
+      @FID file:close
+    ] buffer:preserve ;
+}}
+~~~
+
+~~~
+{{
+  'FID var
+---reveal---
+  :file:spew (ss-)
+    file:open<for-writing> !FID
+    [ @FID file:write ] s:for-each
+    @FID file:close ; 
+}}
+~~~

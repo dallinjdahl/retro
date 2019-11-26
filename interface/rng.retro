@@ -1,0 +1,16 @@
+## Random Number Generator
+
+~~~
+{{
+  'io var
+  :identify
+    @io n:zero? [
+      #10 io:scan-for dup n:negative?
+      [ drop 'IO_DEVICE_TYPE_0010_NOT_FOUND s:put nl ]
+      [ !io ] choose ] if ;
+  ---reveal---
+  :io:rng-operation identify @io io:invoke ;
+}}
+
+:n:random (-n)  io:rng-operation ;
+~~~

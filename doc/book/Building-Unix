@@ -1,0 +1,35 @@
+# Building RETRO on BSD, Linux, macOS
+
+RETRO is well supported on BSD (FreeBSD, NetBSD, OpenBSD),
+Linux, and macOS systems. It should build on any of these
+without issue.
+
+## Requirements
+
+- c compiler & linker
+- standard headers
+- make
+
+## Process
+
+Run `make`
+
+This will build the toolchain and then the main `retro`
+executable.
+
+## Executables
+
+In the `bin/` directory:
+
+    retro
+    retro-unu
+    retro-muri
+    retro-extend
+    retro-embedimage
+    retro-describe
+
+## Issues
+
+If you run into any build issues, please send details to
+crc@forth.works so I can work on addressing them as quickly
+as possible.

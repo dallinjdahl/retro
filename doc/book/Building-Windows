@@ -1,0 +1,34 @@
+# Building RETRO on Windows
+
+It is possible to build RETRO on Windows, though a few of the
+extensions are not supported:
+
+- no `unix:` words
+- no `gopher:` words
+
+This is currently more difficult than on a Unix host. If you have
+Windows 10 and WSL, it may be better to build under that (using
+the Linux instructions).
+
+## Setup Build Environment
+
+RETRO on Windows is built with TCC.
+
+Go to http://download.savannah.gnu.org/releases/tinycc/
+
+Download the *winapi-full* and *tcc-xxxx-bin* packages for your
+system. Decompress them, copy the headers from the winapi
+package into the tcc directory.
+
+## Prepare Source
+
+Copy the `source/interfaces/retro-windows.c` and the
+`source/interfaces/retro-windows.c` to the directory you setup
+tcc into.
+
+## Build
+
+Building will require use of the command line. Assuming that
+tcc.exe is in the current directory along with the RETRO sources:
+
+    tcc retro-windows.c -o retro.exe

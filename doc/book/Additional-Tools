@@ -1,0 +1,69 @@
+# Additional Tools
+
+In addition to the core `retro` binary, the `bin` directory
+will contain a few other tools.
+
+## retro
+
+This is the main RETRO binary.
+
+## retro-describe
+
+This is a program that looks up entries in the Glossary.
+
+At the command line, you can use it like:
+
+```
+retro-describe s:for-each
+```
+
+## retro-embedimage
+
+This is a program which generates a C file with the ngaImage
+contents. It's used when building `retro`.
+
+```
+retro-embedimage ngaImage
+```
+
+The output is written to stdout; redirect it as needed.
+
+## retro-extend
+
+This is a program which compiles code into the ngaImage.
+It's used when building `retro` and when you want to make a
+standalone image with custom additions.
+
+Example command line:
+
+```
+retro-extend ngaImage example/rot13.forth
+```
+
+Pass the image name as the first argument, and then file names
+as susequent ones. Do *not* use this for things relying on I/O
+apart from the basic console output as it doesn't emulate other
+devices. If you need to load in things that rely on using the
+optional I/O devices, see the **Advanced Builds** chapter.
+
+## retro-muri
+
+This is the assembler for Nga. It's used to build the initial
+RETRO kernel and can be used by other tools as well.
+
+## retro-tags
+
+TBD
+
+## retro-unu
+
+This is the literate source extraction tool for RETRO. It
+is used in building `retro`.
+
+Example usage:
+
+```
+retro-unu literate/RetroForth.md
+```
+
+Output is written to stdout; redirect as neeeded.
